@@ -2,6 +2,7 @@
 #define __XML_LOADER__H__
 
 #include "XML_Node.h"
+#include "XML_Attr.h"
 
 //
 // Defination
@@ -98,21 +99,79 @@ int XMLDocument_load(XMLDocument *doc, const char *path)
             else
                 cur_node = XMLNode_new(cur_node); //Make cur_node with prev node as parent
 
+            //Start tag
             i++;
-
+            XMLAttribute *cur_attr;
+            cur_attr->key = 0;
+            cur_attr->value = 0;
             //Going through end tag
             while (buf[i] != '>')
+            {
                 lex[lexi++] = buf[i++];
+
+                //For tag
+                if (buf[i] == ' ' && !cur_node->tag)
+                {
+                    lex[lexi] = '\0';
+                    cur_node->tag = strdup(lex);
+                    lexi = 0;
+                    i++;
+                    continue;
+                }
+
+                //to ignore space
+                if (lex[lexi - 1] == ' ')
+                {
+                    lexi--;
+                    continue;
+                }
+
+                //For key
+                if (buf[i] == '=')
+                {
+                    lex[lexi] = '\0';
+                    cur_attr->key = strdup(lex);
+                    lexi = 0;
+                    //here we will not incre 'i' becauz we are already at '"'
+                    continue;
+                }
+
+                //For value
+                if (buf[i] == '"')
+                {
+                    //check for error if no key exists
+                    if (!cur_attr->key)
+                    {
+                        fprintf(stderr, "Value doesn't has key value  \n");
+                        return FALSE;
+                    }
+                    lexi = 0;
+                    i++;
+
+                    while (buf[i] != '"')
+                        lex[lexi++] = buf[i++];
+                    lex[lexi] = '\0';
+                    cur_attr->value = strdup(lex);
+                    XMLAttributeList_add(&cur_node->attributes, cur_attr);
+                    // cur_attr->key = NULL;
+                    // cur_attr->value = NULL;
+                    lexi = 0;
+                    i++;
+                    continue;
+                }
+            }
+
+            //Set tag name if is none
             lex[lexi] = '\0';
-
-            //Copy tag name
-            cur_node->tag = strdup(lex); //make duplicate of lex which currently holds tag name
-
+            if (!cur_node->tag)
+            {
+                cur_node->tag = strdup(lex);
+            }
             lexi = 0;
             i++;
             continue;
         }
-        //Mainly it will go in else only if its inner text :-{
+        //Mainly it will go in else only if its text :-{
         else
         {
             lex[lexi++] = buf[i++];
