@@ -3,6 +3,10 @@
 
 #include "XML_Node.h"
 #include "XML_Attr.h"
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 //
 // Defination
 //
@@ -167,7 +171,7 @@ int XMLDocument_load(XMLDocument *doc, const char *path)
             i++;
             continue;
         }
-        //Mainly it will go in else only if its inner text :-{
+        //Mainly it will go in else only if its text :-{
         else
         {
             lex[lexi++] = buf[i++];

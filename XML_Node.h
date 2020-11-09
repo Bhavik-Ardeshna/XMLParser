@@ -2,7 +2,6 @@
 #define __XML_NODE__H__
 
 #include "XML_Attr.h"
-
 //
 // Defination
 //
