@@ -107,7 +107,7 @@ int XMLDocument_load(XMLDocument *doc, const char *path)
                 lex[lexi++] = buf[i++];
             }
 
-            lexi = 0;
+                        lexi = 0;
             i++;
             continue;
         }
