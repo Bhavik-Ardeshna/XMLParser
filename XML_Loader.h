@@ -2,7 +2,7 @@
 #define __XML_LOADER__H__
 
 #include "XML_Node.h"
-
+#include "XML_Attr.h"
 //
 // Defination
 //
@@ -98,15 +98,14 @@ int XMLDocument_load(XMLDocument *doc, const char *path)
             else
                 cur_node = XMLNode_new(cur_node); //Make cur_node with prev node as parent
 
+            //Starting of tag
             i++;
+            XML_Attr cur_attr = {0, 0};
 
-            //Going through end tag
             while (buf[i] != '>')
+            {
                 lex[lexi++] = buf[i++];
-            lex[lexi] = '\0';
-
-            //Copy tag name
-            cur_node->tag = strdup(lex); //make duplicate of lex which currently holds tag name
+            }
 
             lexi = 0;
             i++;

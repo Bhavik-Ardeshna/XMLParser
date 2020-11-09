@@ -1,16 +1,7 @@
 #ifndef __XML_NODE__H__
 #define __XML_NODE__H__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
+#include "XML_Attr.h"
 
 //
 // Defination
@@ -21,6 +12,7 @@ struct _XML_Node
     char *tag;
     char *inner_text;
     struct _XML_Node *parent;
+    XML_AttrList attributes;
 };
 typedef struct _XML_Node XML_Node;
 
@@ -37,6 +29,7 @@ XML_Node *XMLNode_new(XML_Node *parent)
     node->parent = parent;
     node->tag = NULL;
     node->inner_text = NULL;
+    XMLAttrList_init(&node->attributes);
     return node;
 }
 
@@ -47,6 +40,12 @@ void XMLNode_free(XML_Node *node)
         free(node->tag);
     if (node->inner_text)
         free(node->inner_text);
+
+    for (int i = 0; i < node->attributes.size; i++)
+    {
+        XMLAttr_free(&node->attributes.data[i]);
+    }
+
     free(node);
 }
 
