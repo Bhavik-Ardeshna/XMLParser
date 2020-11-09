@@ -105,9 +105,65 @@ int XMLDocument_load(XMLDocument *doc, const char *path)
             while (buf[i] != '>')
             {
                 lex[lexi++] = buf[i++];
+
+                //For tag name
+                if (buf[i] == ' ' && !cur_node->tag)
+                {
+                    lex[lexi] = '\0';
+                    cur_node->tag = strdup(lex);
+                    lexi = 0;
+                    i++;
+                    continue;
+                }
+
+                //Ignore unwanted space
+                if (lex[lexi - 1] == ' ')
+                {
+                    lexi--;
+                    continue;
+                }
+
+                //For attr key name
+                if (buf[i] == '=')
+                {
+                    lex[lexi] = '\0';
+                    cur_attr.key = strdup(lex);
+                    lexi = 0;
+                    continue;
+                }
+
+                //For attr value
+                if (buf[i] == '"')
+                {
+                    if (!cur_attr.key)
+                    {
+                        fprintf(stderr, "No key found for the given value");
+                        return FALSE;
+                    }
+                    lexi = 0;
+                    i++;
+
+                    while (buf[i] != '"')
+                    {
+                        lex[lexi++] = buf[i++];
+                    }
+                    lex[lexi] = '\0';
+                    cur_attr.value = strdup(lex);
+                    XMLAttrList_add(&cur_node->attributes, &cur_attr);
+                    cur_attr.key = NULL;
+                    cur_attr.value = NULL;
+                    lexi = 0;
+                    i++;
+                    continue;
+                }
             }
 
-                        lexi = 0;
+            lex[lexi] = '\0';
+            if (!cur_node->tag)
+            {
+                cur_node->tag = strdup(lex);
+            }
+            lexi = 0;
             i++;
             continue;
         }
