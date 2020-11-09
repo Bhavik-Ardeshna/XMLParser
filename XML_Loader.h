@@ -3,10 +3,6 @@
 
 #include "XML_Node.h"
 #include "XML_Attr.h"
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 //
 // Defination
 //
